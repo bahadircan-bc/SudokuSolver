@@ -1,6 +1,9 @@
 import numpy as np
 import time
 
+with open('solution.txt', 'w') as file:
+    file.write('\n')
+
 class Solver:
     up_one_line = '\033[F'
 
@@ -41,45 +44,43 @@ class Solver:
                 return False
         return True
     
-    def recursive_solve(self, board):
-        _board = np.copy(board)
-        # time.sleep(0.01)
-        zero_slots = np.where(_board==0)
-        if len(zero_slots[0]) == 0:
-            print(np.reshape(_board, (9, 9)))
-            print('solved...')
-            self.solved_board = _board
-            return True
-        slot = zero_slots[0][0]
-        for value in range(1,10):
-            if self.is_valid_horizontal_and_vertical(board=_board, index=slot, value=value) and self.is_valid_in_square(board=_board, index=slot, value=value):
-                _board[slot] = value
-                print(f'{np.reshape(_board, (9, 9))}{self.up_one_line * 9}')
-                if self.recursive_solve(board=_board):
-                    return True
-        return False
-
     def solve(self):
-        if not self.recursive_solve(self.board):
-            print('impossible board')
-        else:
-            return self.solved_board
+        _board = np.copy(self.board)
+        # time.sleep(0.01)
+        yield _board
+        for next_board in self.solve():
+            zero_slot = np.where(next_board==0)[0][0]
+            for value in range(1,10):
+                if self.is_valid_horizontal_and_vertical(board=next_board, index=zero_slot, value=value) and self.is_valid_in_square(board=next_board, index=zero_slot, value=value):
+                    new_board = np.copy(next_board)
+                    new_board[zero_slot] = value
+                    yield new_board
+         
 
 
 if __name__ == '__main__':
     # board is going to be a flattened array with 81 elements
     # row and col numbers is 1 indexed to increase readability
     random_board = np.array([
-        [0, 0, 4, 0, 3, 0, 0, 6, 7],
-        [0, 0, 0, 0, 0, 0, 9, 0, 0],
-        [8, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 9, 0, 4, 0, 0],
-        [0, 0, 5, 0, 0, 0, 2, 0, 0],
-        [0, 1, 0, 3, 0, 0, 0, 5, 9],
-        [0, 0, 6, 0, 7, 0, 0, 3, 5],
-        [0, 0, 0, 0, 0, 0, 0, 2, 0],
-        [0, 4, 0, 0, 0, 6, 0, 0, 0]
+        [0, 0, 0, 0, 0, 2, 0, 0, 0],
+        [1, 0, 3, 4, 0, 0, 0, 0, 5],
+        [2, 0, 0, 0, 5, 0, 4, 0, 1],
+        [3, 4, 0, 0, 0, 5, 0, 9, 0],
+        [8, 0, 7, 0, 0, 0, 3, 0, 4],
+        [0, 9, 0, 3, 0, 0, 0, 1, 7],
+        [6, 0, 5, 0, 3, 0, 0, 0, 9],
+        [4, 0, 0, 0, 0, 8, 7, 0, 2],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0]
  ])
 
     solver = Solver(board=random_board)
-    print(solver.solve())
+    for _board in solver.solve():
+        print(_board)
+        zeroes = np.where(_board==0)
+        print(len(zeroes[0]))
+        if len(zeroes[0]) == 0:
+            break
+    else:
+        print('in else')
+    print('im executed')
+    # print(solver.solve())
