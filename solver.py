@@ -1,11 +1,7 @@
 import numpy as np
 import time
 
-with open('solution.txt', 'w') as file:
-    file.write('\n')
-
 class Solver:
-    up_one_line = '\033[F'
 
     def __init__(self, board) -> None:
         self.board = np.array(board).flatten()
@@ -55,32 +51,3 @@ class Solver:
                     new_board = np.copy(next_board)
                     new_board[zero_slot] = value
                     yield new_board
-         
-
-
-if __name__ == '__main__':
-    # board is going to be a flattened array with 81 elements
-    # row and col numbers is 1 indexed to increase readability
-    random_board = np.array([
-        [0, 0, 0, 0, 0, 2, 0, 0, 0],
-        [1, 0, 3, 4, 0, 0, 0, 0, 5],
-        [2, 0, 0, 0, 5, 0, 4, 0, 1],
-        [3, 4, 0, 0, 0, 5, 0, 9, 0],
-        [8, 0, 7, 0, 0, 0, 3, 0, 4],
-        [0, 9, 0, 3, 0, 0, 0, 1, 7],
-        [6, 0, 5, 0, 3, 0, 0, 0, 9],
-        [4, 0, 0, 0, 0, 8, 7, 0, 2],
-        [0, 0, 0, 1, 0, 0, 0, 0, 0]
- ])
-
-    solver = Solver(board=random_board)
-    for _board in solver.solve():
-        print(_board)
-        zeroes = np.where(_board==0)
-        print(len(zeroes[0]))
-        if len(zeroes[0]) == 0:
-            break
-    else:
-        print('in else')
-    print('im executed')
-    # print(solver.solve())

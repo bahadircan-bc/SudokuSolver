@@ -79,6 +79,7 @@ if __name__ == '__main__':
                 pg.display.flip()
                 
                 if len(np.where(_board==0)[0])==0:
+                    solving=False
                     break
 
         for index, cell in enumerate(sudoku_cells):
